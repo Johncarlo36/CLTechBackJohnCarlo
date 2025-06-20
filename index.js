@@ -20,10 +20,10 @@ const MONGODB_STRING = process.env.MONGODB_STRING;
 // [SECTION] Validate MongoDB URI
 if (!MONGODB_STRING) {
 	console.error("❌ ERROR: MONGODB_STRING is undefined. Please check your environment variables.");
-	process.exit(1);
+	process.exit(1); // Exit to avoid connecting with undefined URI
 }
 
-// [SECTION] MongoDB Connection (no deprecated options)
+// [SECTION] MongoDB Connection (clean version - no deprecated options)
 mongoose.connect(MONGODB_STRING)
 	.then(() => console.log('✅ Connected to MongoDB Atlas'))
 	.catch((err) => {
@@ -33,7 +33,10 @@ mongoose.connect(MONGODB_STRING)
 
 // [SECTION] CORS Options
 const corsOptions = {
-	origin: ['http://localhost:8000', 'http://localhost:3000'],
+	origin: [
+		'https://cl-tech-front-john-carlo.vercel.app', // ✅ Vercel frontend domain
+		'http://localhost:8000' // ✅ Local development
+	],
 	credentials: true,
 	optionsSuccessStatus: 200
 };
