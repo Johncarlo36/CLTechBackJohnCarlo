@@ -20,10 +20,10 @@ const MONGODB_STRING = process.env.MONGODB_STRING;
 // [SECTION] Validate MongoDB URI
 if (!MONGODB_STRING) {
 	console.error("❌ ERROR: MONGODB_STRING is undefined. Please check your environment variables.");
-	process.exit(1); // Exit to avoid connecting with undefined URI
+	process.exit(1);
 }
 
-// [SECTION] MongoDB Connection (clean version - no deprecated options)
+// [SECTION] MongoDB Connection (no deprecated options)
 mongoose.connect(MONGODB_STRING)
 	.then(() => console.log('✅ Connected to MongoDB Atlas'))
 	.catch((err) => {
@@ -41,6 +41,11 @@ const corsOptions = {
 // [SECTION] Middlewares
 app.use(express.json());
 app.use(cors(corsOptions));
+
+// [SECTION] Root Route - Fixes "Cannot GET /"
+app.get('/', (req, res) => {
+	res.send('🚀 Server is up and running!');
+});
 
 // [SECTION] Backend Routes
 app.use('/users', userRoute);
