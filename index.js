@@ -17,16 +17,19 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const MONGODB_STRING = process.env.MONGODB_STRING;
 
-// [SECTION] MongoDB Connection
-mongoose.connect(MONGODB_STRING, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
-})
-.then(() => console.log('✅ Connected to MongoDB Atlas'))
-.catch((err) => {
-	console.error('❌ MongoDB connection error:', err.message);
-	process.exit(1); // Exit if DB connection fails
-});
+// [SECTION] Validate MongoDB URI
+if (!MONGODB_STRING) {
+	console.error("❌ ERROR: MONGODB_STRING is undefined. Please check your environment variables.");
+	process.exit(1); // Exit to avoid connecting with undefined URI
+}
+
+// [SECTION] MongoDB Connection (clean version - no deprecated options)
+mongoose.connect(MONGODB_STRING)
+	.then(() => console.log('✅ Connected to MongoDB Atlas'))
+	.catch((err) => {
+		console.error('❌ MongoDB connection error:', err.message);
+		process.exit(1);
+	});
 
 // [SECTION] CORS Options
 const corsOptions = {
@@ -47,7 +50,9 @@ app.use('/news', newsRoutes);
 
 // [SECTION] Start Server
 if (require.main === module) {
-	app.listen(PORT, () => console.log(`🚀 API is running at http://localhost:${PORT}`));
+	app.listen(PORT, () => {
+		console.log(`🚀 API is running at http://localhost:${PORT}`);
+	});
 }
 
 // [SECTION] Export app for testing or other usage
